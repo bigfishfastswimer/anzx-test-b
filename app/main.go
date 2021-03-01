@@ -11,14 +11,14 @@ var GitHash string
 // Initializing struct for ReleaseInfo and Resbuilder which will be encoded for api response 
 type (
 	ReleaseInfo struct {
-		Version string `json: "version"`
-		CommitId string `json: "lastcommitsha"`
-		Description string `json: "description"`
+		Version string `json:"version"`
+		CommitId string `json:"lastcommitsha"`
+		Description string `json:"description"`
 	}
 )
 type (
 	ResBuilder struct {
-		Content []ReleaseInfo `json: "myapplication"`
+		Myapplication []ReleaseInfo `json:"myapplication"`
 	}
 )
 
@@ -26,22 +26,18 @@ type (
 func main() {
     fmt.Println("Starting Http server")
   	http.HandleFunc("/version", HandleGetVersion)
-    // http.HandleFunc("/update", HandleUpdateVideos) 
     http.ListenAndServe(":8080", nil)
 }
 // function that produce the rseponse.
 func HandleGetVersion(w http.ResponseWriter, r *http.Request){
-  // for header, value := range r.Header {
-  //   fmt.Printf("Key: %v \t Value: %v \n", header, value)
-  // }
   w.Header().Set("Content-Type", "application/json")
  	w.WriteHeader(http.StatusOK)
   a := ReleaseInfo {
 		Version: GitTag,
 		CommitId: GitHash,
-		Description: "Api for returning application info",
+		Description: "Api for application info",
 	}
-  err := json.NewEncoder(w).Encode(ResBuilder{Content: []ReleaseInfo{a}})
+  err := json.NewEncoder(w).Encode(ResBuilder{Myapplication: []ReleaseInfo{a}})
   if err != nil {
     panic(err)
   }
