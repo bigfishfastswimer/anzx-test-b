@@ -41,5 +41,8 @@ func HandleGetVersion(w http.ResponseWriter, r *http.Request){
 		CommitId: GitHash,
 		Description: "Api for returning application info",
 	}
-  json.NewEncoder(w).Encode(ResBuilder{Content: []ReleaseInfo{a}})
+  err := json.NewEncoder(w).Encode(ResBuilder{Content: []ReleaseInfo{a}})
+  if err != nil {
+    panic(err)
+  }
 }
