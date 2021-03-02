@@ -47,7 +47,10 @@ jobs:
     #   uses: actions/checkout@v2
     - name: Get tag name
       id: get_tag_name
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      run: |
+        echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
     - uses: actions/checkout@v1
       with:
         ref: ${{ steps.get_tag_name.outputs.VERSION }}
@@ -68,7 +71,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: $PROJECT
-        GIT_SHA: ${{ github.sha }}
+        GIT_SHA: ${{ steps.get_tag_name.outputs.sha_short }}
       run: |
         # Build a docker container and
         # push it to ECR so that it can
