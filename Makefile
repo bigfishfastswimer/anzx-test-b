@@ -3,33 +3,41 @@
 include project.conf
 export $(shell sed 's/=.*//' project.conf)
 
-REVERSE_DATE=$(shell date +'%Y%m%d')
+ifdef TAG_NAME
+req_tag_name:
+else
+req_tag_name:
+	$(error Must give TAG_NAME, eg. v1.0.0)
+endif
+.PHONY: req_tag_name
 
+
+HASH_NAME=$(shell git rev-parse --short HEAD
+current_dir = $(shell pwd)
 .PHONY: build test
 
 # all: prompt-build
 
 # Docker Container Build Commands
-build: build-alpine build-build build-validate
+build: build-runtime build-build build-validate
 
-build-alpine:
+build-runtime: req_tag_name
 	@echo -e Building Alpine Root Project Container...
-	docker build -t ${projectName}/alpine:${REVERSE_DATE} -f docker/alpine/Dockerfile docker/alpine
-	docker tag ${projectName}/alpine:${REVERSE_DATE} ${projectName}/alpine:latest
+	docker build --target runtime -t ${projectName}/web-app:${HASH_NAME} --build-arg TAG_NAME=$(TAG_NAME) --build-arg HASH_NAME=$(HASH_NAME) .
+	docker tag ${projectName}/web-app:${HASH_NAME} ${projectName}/web-app:latest
 
-build-build:
-	@echo -e Building Project Build Container...
-	docker build -t ${projectName}/build:${REVERSE_DATE} --build-arg projectName=${projectName} -f docker/build/Dockerfile docker/build
-	docker tag ${projectName}/build:${REVERSE_DATE} ${projectName}/build:latest
+build-runtime-ci: req_tag_name
+	@echo -e Building Container with GitHub Actions.
+	docker build --target runtime -t $(ECR_REGISTRY)/${PROJECT}:$(TAG_NAME) --build-arg TAG_NAME=$(TAG_NAME) --build-arg HASH_NAME=$(GIT_SHA) .
+	docker push $(ECR_REGISTRY)/${projectName}:$(TAG_NAME)
 
-build-validate:
-	@echo -e Building Project Validation Container...
-	docker build -t ${projectName}/validate:${REVERSE_DATE} --build-arg projectName=${projectName} -f docker/validate/Dockerfile docker/validate
-	docker tag ${projectName}/validate:${REVERSE_DATE} ${projectName}/validate:latest
-
+dev-env:
+	@echo -e Building Project dev Container and get in there..
+	docker build --target dev . -t go-dev
+	docker run -it -v $(current_dir)/app:/work go-dev sh
 
 local-lint:
-	docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.37.1 golangci-lint run -v
+	docker run --rm -v $(current_dir)/app:/app -w /app golangci/golangci-lint:v1.37.1 golangci-lint run -v
 
 test:
 	cd ${appDir}; go vet . && go test -cover -v .
