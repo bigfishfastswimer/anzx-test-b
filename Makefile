@@ -28,8 +28,8 @@ build-validate:
 	docker tag ${projectName}/validate:${REVERSE_DATE} ${projectName}/validate:latest
 
 
-lint:
-	golangci-lint run
+local-lint:
+	docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.37.1 golangci-lint run -v
 
 test:
 	go vet . && go test -cover -v . 

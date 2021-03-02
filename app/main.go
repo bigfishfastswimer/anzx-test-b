@@ -26,7 +26,10 @@ type (
 func main() {
     fmt.Println("Starting Http server")
   	http.HandleFunc("/version", HandleGetVersion)
-    http.ListenAndServe(":8080", nil)
+    err := http.ListenAndServe(":8080", nil)
+    if err != nil {
+      panic(err)
+    }
 }
 // function that produce the rseponse.
 func HandleGetVersion(w http.ResponseWriter, r *http.Request){
