@@ -24,13 +24,35 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: setup-go
+        uses: actions/setup-go@v1
+        id: go
+        with:
+          go-version: 1.16
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: code-checkout
+        uses: actions/checkout@v2
+
+      - name: Cache go modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-go-modules
+        with:
+          # go cache files are stored in ` ~/go/pkg/mod` on Linux/macOS
+          path:  ~/go/pkg/mod
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: go-test
+        run: make test
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
           # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
           version: v1.29
-
           # Optional: working directory, useful for monorepos
           working-directory: app

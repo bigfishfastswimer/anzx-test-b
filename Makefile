@@ -5,9 +5,9 @@ export $(shell sed 's/=.*//' project.conf)
 
 REVERSE_DATE=$(shell date +'%Y%m%d')
 
-.PHONY: all build validate prompt
+.PHONY: build test
 
-all: prompt-build
+# all: prompt-build
 
 # Docker Container Build Commands
 build: build-alpine build-build build-validate
@@ -32,52 +32,52 @@ local-lint:
 	docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.37.1 golangci-lint run -v
 
 test:
-	go vet . && go test -cover -v . 
+	cd ${appDir}; go vet . && go test -cover -v .
 # Stack Build Commands
-stack-create:
-	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a create -y -t ${STACK_TEMPLATE}" scripts/container.sh
+# stack-create:
+# 	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a create -y -t ${STACK_TEMPLATE}" scripts/container.sh
 
-stack-update:
-	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a update -y -t ${STACK_TEMPLATE}" scripts/container.sh
+# stack-update:
+# 	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a update -y -t ${STACK_TEMPLATE}" scripts/container.sh
 
-stack-delete:
-	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a delete -y -t ${STACK_TEMPLATE}" scripts/container.sh
+# stack-delete:
+# 	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a delete -y -t ${STACK_TEMPLATE}" scripts/container.sh
 
-stack-status:
-	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a status -y -t ${STACK_TEMPLATE}" scripts/container.sh
+# stack-status:
+# 	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a status -y -t ${STACK_TEMPLATE}" scripts/container.sh
 
-stack-validate:
-	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a validate -y -t ${STACK_TEMPLATE}" scripts/container.sh
+# stack-validate:
+# 	@CMDLINE="${projectName}/build:latest /project/scripts/stack.sh -a validate -y -t ${STACK_TEMPLATE}" scripts/container.sh
 
-# Project Code Validation Commands
-validate: validate-code validate-security
+# # Project Code Validation Commands
+# validate: validate-code validate-security
 
-validate-code:
-	@CMDLINE="${projectName}/validate:latest /project/scripts/validate.sh -c -d -s -y" scripts/container.sh
+# validate-code:
+# 	@CMDLINE="${projectName}/validate:latest /project/scripts/validate.sh -c -d -s -y" scripts/container.sh
 
-validate-security:
-	@CMDLINE="${projectName}/validate:latest /project/scripts/validate.sh -S" scripts/container.sh
+# validate-security:
+# 	@CMDLINE="${projectName}/validate:latest /project/scripts/validate.sh -S" scripts/container.sh
 
-# Prompt Container Access Commands
-prompt: prompt-build
-prompt-root: prompt-build-root
+# # Prompt Container Access Commands
+# prompt: prompt-build
+# prompt-root: prompt-build-root
 
-prompt-build:
-	@echo -e Starting Project Build Container With A UserPrompt...
-	@CMDLINE="-i ${projectName}/build:latest /bin/bash" scripts/container.sh
-	@echo Project Container Prompt Complete!
+# prompt-build:
+# 	@echo -e Starting Project Build Container With A UserPrompt...
+# 	@CMDLINE="-i ${projectName}/build:latest /bin/bash" scripts/container.sh
+# 	@echo Project Container Prompt Complete!
 
-prompt-validate:
-	@echo -e Starting Project Validation Container With A User Prompt...
-	@CMDLINE="-i ${projectName}/validate:latest /bin/bash" scripts/container.sh
-	@echo Project Container Prompt Complete!
+# prompt-validate:
+# 	@echo -e Starting Project Validation Container With A User Prompt...
+# 	@CMDLINE="-i ${projectName}/validate:latest /bin/bash" scripts/container.sh
+# 	@echo Project Container Prompt Complete!
 
-prompt-build-root:
-	@echo -e Starting Project Build Container With A UserPrompt...
-	@CMDLINE="-i --user root ${projectName}/build:latest /bin/bash" scripts/container.sh
-	@echo Project Container Prompt Complete!
+# prompt-build-root:
+# 	@echo -e Starting Project Build Container With A UserPrompt...
+# 	@CMDLINE="-i --user root ${projectName}/build:latest /bin/bash" scripts/container.sh
+# 	@echo Project Container Prompt Complete!
 
-prompt-validate-root:
-	@echo -e Starting Project Validation Container With A User Prompt...
-	@CMDLINE="-i --user root ${projectName}/validate:latest /bin/bash" scripts/container.sh
-	@echo Project Container Prompt Complete!
+# prompt-validate-root:
+# 	@echo -e Starting Project Validation Container With A User Prompt...
+# 	@CMDLINE="-i --user root ${projectName}/validate:latest /bin/bash" scripts/container.sh
+# 	@echo Project Container Prompt Complete!
