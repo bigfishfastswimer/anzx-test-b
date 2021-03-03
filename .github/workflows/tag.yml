@@ -29,7 +29,8 @@ jobs:
           release_name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
 
-  checkout-tag:
+
+  release:
     needs: tag
     runs-on: ubuntu-latest
     steps:
@@ -38,10 +39,6 @@ jobs:
         uses: actions/checkout@v1
         with:
           ref: ${{ steps.tag_version.outputs.new_tag}}
-  release:
-    needs: checkout-tag
-    runs-on: ubuntu-latest
-    steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -60,7 +57,7 @@ jobs:
           ECR_REPOSITORY: $PROJECT
           # GIT_SHA: ${GITHUB_SHA:7} 
         run: |
-          echo "Sha: ${GIT_SHA}"
+          echo "Sha: ${GITHUB_SHA}"
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to EKS.
