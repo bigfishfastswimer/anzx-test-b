@@ -29,11 +29,19 @@ jobs:
           release_name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
 
-
-      - uses: actions/checkout@v1
+  checkout-tag:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out release tag
+        id: tag_checkout
+        uses: actions/checkout@v1
         with:
           ref: ${{ steps.tag_version.outputs.new_tag}}
-
+  release:
+    needs: checkout-tag
+    runs-on: ubuntu-latest
+    steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -50,14 +58,13 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: $PROJECT
-          GIT_SHA: ${GITHUB_SHA:7}
+          # GIT_SHA: ${GITHUB_SHA:7} 
         run: |
           echo "Sha: ${GIT_SHA}"
-          echo "Sha: ${GITHUB_SHA:7}"
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to EKS.
-          ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=${GITHUB_REF#refs/tags/} HASH_NAME=${GITHUB_SHA} make build-runtime-ci
+          ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=${GITHUB_REF#refs/tags/} make build-runtime-ci
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF#refs/tags/}"
 
       - name: Scan Docker image

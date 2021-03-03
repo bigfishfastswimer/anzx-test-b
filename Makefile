@@ -28,7 +28,7 @@ build-runtime: req_tag_name
 
 build-runtime-ci: req_tag_name
 	@echo -e Building Container with GitHub Actions.
-	docker build --target runtime -t $(ECR_REGISTRY)/${PROJECT}:$(TAG_NAME) --build-arg TAG_NAME=$(TAG_NAME) --build-arg HASH_NAME=$(GIT_SHA) .
+	docker build --target runtime -t $(ECR_REGISTRY)/${PROJECT}:$(TAG_NAME) --build-arg TAG_NAME=$(TAG_NAME) --build-arg HASH_NAME=$(HASH_NAME) .
 	docker push $(ECR_REGISTRY)/${projectName}:$(TAG_NAME)
 
 dev-env:
