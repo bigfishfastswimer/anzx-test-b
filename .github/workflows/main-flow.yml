@@ -8,7 +8,7 @@ on:
     #   - v*
     branches:
       - main
-      - 'feat*'
+      - feat*
   pull_request:
     branches: [ main ]
     types: [closed]
