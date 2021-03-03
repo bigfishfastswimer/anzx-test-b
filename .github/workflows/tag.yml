@@ -39,6 +39,8 @@ jobs:
   release:
     needs: tag
     runs-on: ubuntu-latest
+    outputs:
+      imageurl_output: ${{ steps.build-image.outputs.image }}
 
     steps:
       - name: Check out release tag
@@ -69,7 +71,7 @@ jobs:
           # push it to ECR so that it can
           # be deployed to EKS.
           ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=$REL_TAG make build-runtime-ci
-          # echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$REL_TAG"
+          echo "::set-output name=image::$ECR_REGISTRY/$PROJECT:$REL_TAG"
 
   post-scan:
     needs: [ release, tag]
@@ -85,7 +87,7 @@ jobs:
         id: docker-scan
         uses: alexjurkiewicz/ecr-scan-image@v1.5.0
         with:
-          repository: $PROJECT
+          repository: ${{needs.release.outputs.imageurl_output}}
           tag: ${{ needs.tag.outputs.tag_name_output}}
           fail_threshold: medium
       - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
