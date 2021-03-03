@@ -86,8 +86,11 @@ jobs:
       - name: Scan Docker image
         id: docker-scan
         uses: alexjurkiewicz/ecr-scan-image@v1.5.0
+        env:
+          image_url: ${{ needs.release.outputs.imageurl_output }}
         with:
           repository: ${{ needs.release.outputs.imageurl_output }}
           tag: ${{ needs.tag.outputs.tag_name_output }}
           fail_threshold: medium
+        
       - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
