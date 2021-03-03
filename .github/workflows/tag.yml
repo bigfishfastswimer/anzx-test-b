@@ -39,8 +39,6 @@ jobs:
   release:
     needs: tag
     runs-on: ubuntu-latest
-    outputs:
-      imageurl_output: ${{ steps.build-image.outputs.image }}
 
     steps:
       - name: Check out release tag
@@ -87,10 +85,10 @@ jobs:
         id: docker-scan
         uses: alexjurkiewicz/ecr-scan-image@v1.5.0
         env:
-          image_url: ${{ needs.release.outputs.imageurl_output }}
+          IMAGE_URL: $PROJECT/${{ needs.tag.outputs.tag_name_output }}
         with:
-          repository: ${{ needs.release.outputs.imageurl_output }}
+          repository: $IMAGE_URL
           tag: ${{ needs.tag.outputs.tag_name_output }}
           fail_threshold: medium
-        
+
       - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
