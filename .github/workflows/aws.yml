@@ -24,9 +24,11 @@
 #    and best practices on handling the access key credentials.
 
 on:
-  push:
-    tags: [v*]
-
+  # push:
+  #   tags: [v*]
+  release:
+    types: # This configuration does not affect the page_build event above
+      - created
 name: Deploy to Amazon ECR
 
 jobs:
