@@ -4,6 +4,8 @@ on:
     branches: [ main ]
     types: [closed]
   workflow_dispatch:
+env:
+  PROJECT: anz-test-b
 jobs:
   tag:
     runs-on: ubuntu-latest
@@ -36,8 +38,6 @@ jobs:
   release:
     needs: tag
     runs-on: ubuntu-latest
-    env:
-      PROJECT: anz-test-b
 
     steps:
       - name: Check out release tag
@@ -60,7 +60,6 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: $PROJECT
           REL_TAG: ${{ needs.tag.outputs.tag_name_output}}
           # GIT_SHA: ${GITHUB_SHA:7}
         run: |
@@ -68,22 +67,18 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to EKS.
-          ECR_REGISTRY=$ECR_REGISTRY PROJECT=$ECR_REPOSITORY TAG_NAME=$REL_TAG make build-runtime-ci
+          ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=$REL_TAG make build-runtime-ci
           # echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$REL_TAG"
 
   post-scan:
     needs: [ release, tag]
     runs-on: ubuntu-latest
-    env:
-      PROJECT: anz-test-b
     steps:
       - name: Scan Docker image
         id: docker-scan
         uses: alexjurkiewicz/ecr-scan-image@v1.5.0
-        env:
-          ECR_REGISTRY: $PROJECT
         with:
-          repository: $ECR_REPOSITORY
+          repository: $PROJECT
           tag: ${{ needs.tag.outputs.tag_name_output}}
           fail_threshold: medium
       - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
