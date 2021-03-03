@@ -1,0 +1,36 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anzx-test-b
+  annotations:
+    fluxcd.io/automated: "true"
+spec:
+  selector:
+    matchLabels:
+      app: anzx-test-b
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: anzx-test-b
+    spec:
+      containers:
+      - name: anzx-test-b
+        # image: 00000000000000.dkr.ecr.my-region.amazonaws.com/example-eks:tag
+        # image: REGISTRY/IMAGE:TAG
+        image: 866558580034.dkr.ecr.ap-southeast-2.amazonaws.com/anz-test-b:v1.0.2
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+            memory: 512Mi

@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Test and Lint
 
 # Controls when the action will run. 
@@ -8,17 +6,19 @@ on:
   push:
     # tags:
     #   - v*
-    branches: [ main ]
+    branches:
+      - main
+      - 'feat*'
   pull_request:
     branches: [ main ]
-
+    types: [closed]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -56,3 +56,21 @@ jobs:
           version: v1.29
           # Optional: working directory, useful for monorepos
           working-directory: app
+
+      - name: Bump version and push tag
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'main'
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v5.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: main, master
+
+      - name: Create a GitHub release
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'main'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          release_name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }} 

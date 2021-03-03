@@ -71,13 +71,24 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: $PROJECT
-        GIT_SHA: ${{ steps.get_tag_name.outputs.sha_short }}
+        GIT_SHA: ${GITHUB_SHA:7}
       run: |
+        echo "Sha: ${GIT_SHA}"
+        echo "Sha: ${GITHUB_SHA:7}"
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to EKS.
         ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=${GITHUB_REF#refs/tags/} HASH_NAME=$GIT_SHA make build-runtime-ci
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$GIT_SHA"
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF#refs/tags/}"
+
+    - name: Scan Docker image
+      id: docker-scan
+      uses: alexjurkiewicz/ecr-scan-image@v1.5.0
+      with:
+        repository: $PROJECT
+        tag: ${GITHUB_REF#refs/tags/}
+        fail_threshold: medium
+    - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
 
     # - name: Fill in the new image ID in the Amazon ECS task definition
     #   id: task-def
