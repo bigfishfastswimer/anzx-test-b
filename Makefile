@@ -12,7 +12,7 @@ endif
 .PHONY: req_tag_name
 
 
-HASH_NAME=$(shell git rev-parse --short HEAD
+HASH_NAME=$(shell git rev-parse --short HEAD)
 current_dir = $(shell pwd)
 .PHONY: build test
 
