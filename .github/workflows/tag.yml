@@ -33,6 +33,9 @@ jobs:
   release:
     needs: tag
     runs-on: ubuntu-latest
+    env:
+      PROJECT: anz-test-b
+
     steps:
       - name: Check out release tag
         id: tag_checkout
@@ -55,20 +58,21 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: $PROJECT
-          # GIT_SHA: ${GITHUB_SHA:7} 
+          REL_TAG: ${{ steps.tag_version.outputs.new_tag}}
+          # GIT_SHA: ${GITHUB_SHA:7}
         run: |
           echo "Sha: ${GITHUB_SHA}"
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to EKS.
-          ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=${GITHUB_REF#refs/tags/} make build-runtime-ci
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF#refs/tags/}"
+          ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=$REL_TAG make build-runtime-ci
+          # echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$REL_TAG"
 
       - name: Scan Docker image
         id: docker-scan
         uses: alexjurkiewicz/ecr-scan-image@v1.5.0
         with:
           repository: $PROJECT
-          tag: ${GITHUB_REF#refs/tags/}
+          tag: ${{ steps.tag_version.outputs.new_tag}}
           fail_threshold: medium
       - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
