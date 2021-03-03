@@ -9,3 +9,4 @@ docker build --target runtime . -t anz-test/web-app:${VERSION}
 ```sh
 docker run -p 8080:8080 anz-test/web-app:latest
 ```
+## Release Flow
