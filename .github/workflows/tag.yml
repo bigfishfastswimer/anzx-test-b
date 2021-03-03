@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 env:
   PROJECT: anz-test-b
+  AWS_REGION: ap-southeast-2
 jobs:
   tag:
     runs-on: ubuntu-latest
