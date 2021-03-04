@@ -1,5 +1,5 @@
 FROM golang:1.16-alpine as dev
-
+ENV CGO_ENABLED=0
 WORKDIR /work
 
 FROM golang:1.16-alpine as build

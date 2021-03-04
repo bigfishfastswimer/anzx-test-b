@@ -60,7 +60,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Build and tag image
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -73,6 +73,30 @@ jobs:
           # be deployed to EKS.
           ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=$REL_TAG make build-runtime-ci
           echo "::set-output name=image::$ECR_REGISTRY/$PROJECT:$REL_TAG"
+
+      - name: Image pre scanning
+        uses: anchore/scan-action@v2
+        with:
+          image: $ECR_REGISTRY/$PROJECT:$REL_TAG
+          fail-build: true
+          severity-cutoff: high
+          acs-report-enable: true
+
+      - name: Push image to Amazon ECR
+        id: publish-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REL_TAG: ${{ needs.tag.outputs.tag_name_output}}
+          # GIT_SHA: ${GITHUB_SHA:7}
+        run: |
+          # Push it to ECR so that it can
+          # be deployed to EKS.
+          ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=$REL_TAG make publish-ecr
+
+      - name: upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
 
   post-scan:
     needs: [ release, tag ]
