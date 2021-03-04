@@ -23,7 +23,9 @@ spec:
     spec:
       containers:
       - name: anzx-test-b
-        image: 866558580034.dkr.ecr.ap-southeast-2.amazonaws.com/anz-test-b:v1.1.6
+        # image: 00000000000000.dkr.ecr.my-region.amazonaws.com/example-eks:tag
+        # image: REGISTRY/IMAGE:TAG
+        image: 866558580034.dkr.ecr.ap-southeast-2.amazonaws.com/anz-test-b:v1.0.2
         ports:
         - containerPort: 8080
         resources:
