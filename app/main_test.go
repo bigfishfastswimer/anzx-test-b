@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 )
+
 // initialise testing module
 func TestHandleGetVersion(t *testing.T) {
 	req, err := http.NewRequest("GET", "/version", nil)
