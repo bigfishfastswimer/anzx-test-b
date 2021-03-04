@@ -6,6 +6,10 @@ on:
     paths:
     - app/**
   workflow_dispatch:
+    inputs:
+      releaseVersion:
+        required: false
+        description: 'custom release version name, eg, when you want to go v1.0.1->v1.1.0'
 env:
   PROJECT: anz-test-b
   AWS_REGION: ap-southeast-2
@@ -26,6 +30,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: main, master
+          custom_tag: ${{ github.event.inputs.releaseVersion }}
 
       - name: Create a GitHub release
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'main'
