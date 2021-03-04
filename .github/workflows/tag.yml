@@ -76,8 +76,9 @@ jobs:
 
       - name: Image pre scanning
         uses: anchore/scan-action@v2
+        id: pre-scan
         with:
-          image: $ECR_REGISTRY/$PROJECT:$REL_TAG
+          image: ${{ steps.login-ecr.outputs.registry }}/$PROJECT:${{ needs.tag.outputs.tag_name_output}}
           fail-build: true
           severity-cutoff: high
           acs-report-enable: true
@@ -96,7 +97,7 @@ jobs:
       - name: upload Anchore scan SARIF report
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: ${{ steps.scan.outputs.sarif }}
+          sarif_file: ${{ steps.pre-scan.outputs.sarif }}
 
   post-scan:
     needs: [ release, tag ]

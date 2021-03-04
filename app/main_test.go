@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// initialise testing module
+// initialise testing module for endpoint
 func TestHandleGetVersion(t *testing.T) {
 	req, err := http.NewRequest("GET", "/version", nil)
 	if err != nil {
