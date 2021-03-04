@@ -23,7 +23,7 @@ make local-test
 make local-lint
 ```
 ### Security Scan
-_lease ensure login to [snyk](https://app.snyk.io/org/) FIRST with_ `docker scan --login`
+_Please ensure login to [snyk](https://app.snyk.io/org/) FIRST with_ `docker scan --login`
 ```sh
 TAG_NAME=latest make local-scan
 ```
