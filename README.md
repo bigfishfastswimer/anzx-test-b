@@ -53,14 +53,15 @@ In this project, release activities have been handled by `Weave GitOps` workflow
   - If test pass, then developer is to create PR to `main` with proper code review process that respect internally  (Assuming we follow [Trunk Base Development](https://trunkbaseddevelopment.com/) )
 #### Semantic Versioning:
   - Once PR got approved and `Merged`, another workflow `Tag and Release` will be triggerd to
-     * GitHub Actions will automatically create new Git tag with incremental value following [Semantic Versioning] (https://semver.org/) standards. Eg. v1.0.0 -> v1.0.1
+     * GitHub Actions will automatically create new Git tag with incremental value following [Semantic Versioning](https://semver.org/) standards. Eg. v1.0.0 -> v1.0.1
      * GitHub Actions then create new Git Release
 
 #### Build and publish to AWS ECR:
 
+  - Check out the code to newly created Git tag
   - Log in to AWS ECR
   - Build the docker image
-  - Pre-scanning on local image with `anchore`
+  - Pre-scanning on local image with [anchore](https://anchore.com/)
   - Publish image to ECR after passing security scan
   - Publish scanning report back to GitHub via `codeql`
 
