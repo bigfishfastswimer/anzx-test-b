@@ -1,20 +1,11 @@
 name: Tag and Release
 on:
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #   - app/**
   pull_request:
     branches: [ main ]
     types: [closed]
     paths:
     - app/**
   workflow_dispatch:
-    # inputs:
-    #   releaseVersion:
-    #     required: false
-    #     description: 'custom release version name, eg, when you want to go v1.0.1->v1.1.0'
 env:
   PROJECT: anz-test-b
   AWS_REGION: ap-southeast-2
