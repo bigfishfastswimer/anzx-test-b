@@ -78,7 +78,7 @@ jobs:
         uses: anchore/scan-action@v2
         id: pre-scan
         with:
-          image: ${{ steps.login-ecr.outputs.registry }}/$PROJECT:${{ needs.tag.outputs.tag_name_output}}
+          image: ${{ steps.login-ecr.outputs.registry }}/anz-test-b:${{ needs.tag.outputs.tag_name_output}}
           fail-build: true
           severity-cutoff: high
           acs-report-enable: true

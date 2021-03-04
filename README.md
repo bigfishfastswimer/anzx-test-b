@@ -38,7 +38,7 @@ TAG_NAME=latest make local-run
 In this project, release activities have been handled by `Weave GitOps` workflow in combination with `GitHub Actions` and `EKS` which is an AWS managed Kubernetes service
 
 
-#### The workflow started from local developer labtop:
+#### The workflow started from local developer laptop:
  - developer create feature or bug-fix branches off main/master
  - upon the completion of development work, perform local unit test, lint and vet with `make local-test` and `make local-lint`
 
