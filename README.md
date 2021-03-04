@@ -45,6 +45,9 @@ In this project, release activities have been handled by `Weave GitOps` workflow
 #### Push feature/bugs-fix branch to remote repo:
 
   - Upon new branch creation, if change detected in `app` directory, GitHub Actions trigger `Test and Lint` workflow on  one of the GitHub runners
+
+   ![remote test](/images/test2.png)
+
   - If test pass, then developer is to create PR to `main` with proper code review process that respect internally  (Assuming we follow [Trunk Base Development](https://trunkbaseddevelopment.com/) )
 #### Semantic Versioning:
   - Once PR got approved and `Merged`, another workflow `Tag and Release` will be triggerd to
@@ -108,7 +111,7 @@ curl -Ss a7c6776e3c2ea43f58335baa76a14ab5-196060278.ap-southeast-2.elb.amazonaws
 API Example Response:
 
 ![respoonse](/images/response.png)
-## Riks considerations
+## Risks considerations
  - GitHub Action workflow running on public runners. we don't control infra of Action Runners where it is sharing public with other workflow. we have no visitbility of OS and Infrastructure config.
 
 Recommandation: In enterpise environment, we should host our own runners in private subnets with one of Cloud service provider. Making sure the storage is encrypted. Also, restrict what this runners can do by assigning limited IAM permission to VM/Instances/Pods
