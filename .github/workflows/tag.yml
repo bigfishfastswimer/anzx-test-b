@@ -39,7 +39,8 @@ jobs:
   release:
     needs: tag
     runs-on: ubuntu-latest
-
+    outputs:
+      registry_output: ${{ steps.login-ecr.outputs.registry }}
     steps:
       - name: Check out release tag
         id: tag_checkout
@@ -72,7 +73,7 @@ jobs:
           echo "::set-output name=image::$ECR_REGISTRY/$PROJECT:$REL_TAG"
 
   post-scan:
-    needs: [ release, tag]
+    needs: [ release, tag ]
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
@@ -85,9 +86,9 @@ jobs:
         id: docker-scan
         uses: alexjurkiewicz/ecr-scan-image@v1.5.0
         env:
-          IMAGE_URL: $PROJECT/${{ needs.tag.outputs.tag_name_output }}
+          IMAGE_URL: ${{ needs.release.outputs.registry_output }}
         with:
-          repository: $IMAGE_URL
+          repository: ${{ needs.release.outputs.registry_output }}/$PROJECT
           tag: ${{ needs.tag.outputs.tag_name_output }}
           fail_threshold: medium
 
