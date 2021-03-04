@@ -1,6 +1,6 @@
 # anzx-test-b
 
-An simple app operables web-style API or service provider.
+An simple app operables as web-style API or service provider in golang.
 
 
 ## Local Development
