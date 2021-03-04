@@ -25,7 +25,7 @@ type (
 	}
 )
 
-// class http server expose api endpoint '/version'
+//  create func http server expose api endpoint '/version'
 func main() {
 	fmt.Println("Starting Http server")
 	http.HandleFunc("/version", HandleGetVersion)
