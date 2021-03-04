@@ -91,7 +91,7 @@ jobs:
         env:
           IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}
         with:
-          repository: ${{ steps.login-ecr.outputs.registry }}/$PROJECT
+          repository: "${{ steps.login-ecr.outputs.registry }}/$PROJECT"
           tag: ${{ needs.tag.outputs.tag_name_output }}
           fail_threshold: medium
 
