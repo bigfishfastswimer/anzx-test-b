@@ -3,6 +3,8 @@ on:
   pull_request:
     branches: [ main ]
     types: [closed]
+    # paths:
+    # - app/**
   workflow_dispatch:
 env:
   PROJECT: anz-test-b
@@ -91,7 +93,7 @@ jobs:
         env:
           IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}
         with:
-          repository: "${{ steps.login-ecr.outputs.registry }}/$PROJECT"
+          repository: ${{ steps.login-ecr.outputs.registry }}/anz-test-b
           tag: ${{ needs.tag.outputs.tag_name_output }}
           fail_threshold: medium
 
