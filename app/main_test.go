@@ -17,7 +17,7 @@ func TestHandleGetVersion(t *testing.T) {
 	handler := http.HandlerFunc(HandleGetVersion)
 
 	handler.ServeHTTP(rr, req)
-	// Check the status code is what we expect. eg 200
+	// Check the status code is what we expect. eg success 200
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
