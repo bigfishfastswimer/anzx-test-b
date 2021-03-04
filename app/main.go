@@ -19,7 +19,7 @@ type (
 	}
 )
 type (
-	// response wrapper
+	// response struct
 	ResBuilder struct {
 		Myapplication []ReleaseInfo `json:"myapplication"`
 	}
