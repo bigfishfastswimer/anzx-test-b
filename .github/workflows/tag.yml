@@ -81,7 +81,6 @@ jobs:
           image: ${{ steps.login-ecr.outputs.registry }}/anz-test-b:${{ needs.tag.outputs.tag_name_output}}
           fail-build: true
           severity-cutoff: high
-          acs-report-enable: true
 
       - name: Push image to Amazon ECR
         id: publish-image
@@ -94,10 +93,10 @@ jobs:
           # be deployed to EKS.
           ECR_REGISTRY=$ECR_REGISTRY PROJECT=$PROJECT TAG_NAME=$REL_TAG make publish-ecr
 
-      - name: upload Anchore scan SARIF report
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: ${{ steps.pre-scan.outputs.sarif }}
+      # - name: upload Anchore scan SARIF report
+      #   uses: github/codeql-action/upload-sarif@v1
+      #   with:
+      #     sarif_file: ${{ steps.pre-scan.outputs.sarif }}
 
   post-scan:
     needs: [ release, tag ]
