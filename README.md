@@ -7,7 +7,9 @@ An simple app operables web-style API or service provider.
 ---
 ### Prerequisite: 
 
-- Run the commands on local laptop with `make` and `docker` installed
+- Run the commands on local laptop with dependencies"
+  - `make`
+  - `docker`
 
 ### Build
 _Select your own image tag_ :
@@ -81,8 +83,8 @@ The high level workflow as shown in below diagram:
 Essentially, what flux does is to:
 
 - Poll ECR status for the latest PUSH event
-- Collect the latest image detail and deploy to EKS cluster
-- Write image detail back to kubernetes manisfest to  Github repo and merge the change to `main` branch 
+- Collect the latest image detail and deploy to EKS cluster base on k8s manisfests in `manisfests` directory 
+- Write image detail back to `manisfests/deployment.yaml` and merge the change to `main` branch in remote Github repo
 
 
 ## Validate deployment on AWS EKS
@@ -112,15 +114,20 @@ API Example Response:
 
 ![respoonse](/images/response.png)
 ## Risks considerations
+
  - GitHub Action workflow running on public runners. we don't control infra of Action Runners where it is sharing public with other workflow. we have no visitbility of OS and Infrastructure config.
 
-Recommandation: In enterpise environment, we should host our own runners in private subnets with one of Cloud service provider. Making sure the storage is encrypted. Also, restrict what this runners can do by assigning limited IAM permission to VM/Instances/Pods
+    Recommandation: In enterpise environment, we should host our own runners in private subnets with one of Cloud service provider. Making sure the storage is encrypted. Also, restrict what this runners can do by assigning limited IAM permission to VM/Instances/Pods
 
 - The service expose unsecured endpoint with http in public network. The traffic is unencrypted and open to the world.
 
-Recommendation: if this intends to internal use, we should create ingress/elb in private subnet with TLS cert installed.
+    Recommendation: if this intends to internal use, we should create ingress/elb in private subnet with TLS cert installed.
 Also, we should setup API gateways in front of loadbalancer wich allows better control on auth, traffic control ,quotas and throttling.
 In addition. it should configure to use API key or OIDC for authentication.
+
+- The container run as priviledge user.
+
+    Recommendation: create a unpriviledge user for running the app
 
 ## License
 
